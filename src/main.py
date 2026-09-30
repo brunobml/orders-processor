@@ -13,6 +13,9 @@ APP = os.environ.get('APP_NAME', 'orders')
 POD = os.environ.get('HOSTNAME', 'unknown')
 MOTO_HOST = os.environ.get('MOTO_ENDPOINT', 'http://moto-cloud:5000')
 TABLE_NAME = f"{APP}-{ENV}-history"
+VERSION = os.environ.get('APP_VERSION', 'v1.1.0')
+BUILD_COMMIT = os.environ.get('BUILD_COMMIT', 'local-dev')
+BUILD_TIME = os.environ.get('BUILD_TIME', 'unknown')
 
 def sqs_call(params):
     data = urllib.parse.urlencode(params).encode()
@@ -103,6 +106,7 @@ class WebHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
         orders = get_orders()
+        short_commit = BUILD_COMMIT[:7] if len(BUILD_COMMIT) >= 7 else BUILD_COMMIT
         badge_color = "#10b981" if ENV == "dev" else ("#f59e0b" if ENV == "test" else "#ef4444")
         orders_rows = "".join(
             f"<tr><td>{o.get('time',{}).get('S','')}</td>"
@@ -171,6 +175,18 @@ class WebHandler(BaseHTTPRequestHandler):
         <tbody>{orders_rows}</tbody>
       </table>
     </div>
+
+    <footer style="margin-top:1.5rem; padding:1.2rem 1.5rem; background:#0f172a; border-radius:10px; border:1px solid #334155; display:flex; justify-content:space-between; align-items:center; font-size:0.88rem; color:#94a3b8; box-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1);">
+      <div>
+        <strong style="color:#38bdf8;">orders-processor</strong> &bull; Release <span style="background:#1e293b; padding:2px 8px; border-radius:4px; color:#34d399; font-weight:600;">{VERSION}</span>
+      </div>
+      <div>
+        Git Commit: <code style="color:#cbd5e1;">{short_commit}</code> &bull; Built: <span style="color:#cbd5e1;">{BUILD_TIME}</span>
+      </div>
+      <div>
+        Pod: <code style="color:#a5f3fc;">{POD}</code> &bull; Env: <span style="text-transform:uppercase; color:#facc15; font-weight:600;">{ENV}</span>
+      </div>
+    </footer>
   </div>
 </body>
 </html>"""

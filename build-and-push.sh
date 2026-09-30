@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TAG="${1:-v1.0.0}"
+TAG="${1:-v1.1.0}"
 REGISTRY_HOST="${REGISTRY_HOST:-ghcr.io/brunobml}"
 IMAGE_NAME="orders-processor"
 FULL_IMAGE="${REGISTRY_HOST}/${IMAGE_NAME}:${TAG}"
