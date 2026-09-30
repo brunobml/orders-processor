@@ -49,6 +49,7 @@ jobs:
           images: ghcr.io/${{ github.repository }}
           tags: |
             type=raw,value=latest
+            type=raw,value=v1.2.0
             type=raw,value=v1.1.0
             type=sha,format=short
             type=ref,event=tag
@@ -61,6 +62,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            APP_VERSION=v1.1.0
+            APP_VERSION=v1.2.0
             BUILD_COMMIT=${{ github.sha }}
             BUILD_TIME=${{ steps.build_time.outputs.time }}
