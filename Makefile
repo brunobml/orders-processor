@@ -1,7 +1,7 @@
 .PHONY: all build push build-and-push run-local test help
 
 TAG ?= v1.0.0
-REGISTRY ?= localhost:5001
+REGISTRY ?= ghcr.io/brunobml
 IMAGE_NAME ?= orders-processor
 FULL_IMAGE ?= $(REGISTRY)/$(IMAGE_NAME):$(TAG)
 

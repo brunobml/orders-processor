@@ -1,5 +1,5 @@
 name: orders
 environment: test
-replicas: 2
-retentionPeriod: "86400"
-image: k3d-cloud-registry:5000/orders-processor:v1.0.0
+replicas: 1
+retentionPeriod: "172800"
+image: ghcr.io/brunobml/orders-processor:v1.0.0
