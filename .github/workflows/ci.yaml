@@ -47,9 +47,13 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ghcr.io/${{ github.repository }}
+          # Each published tag is written exactly once (Phase 3 PV3-11 / D-27):
+          #   v* git tag push  -> v<version> only
+          #   branch push      -> sha-<commit> only
+          # Previously both runs pushed sha-<commit>, so it was overwritten once per release.
           tags: |
             type=semver,pattern=v{{version}}
-            type=sha,format=short,prefix=sha-
+            type=sha,format=short,prefix=sha-,enable=${{ github.ref_type == 'branch' }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
