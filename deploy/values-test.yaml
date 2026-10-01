@@ -2,4 +2,4 @@ name: orders
 environment: test
 replicas: 1
 retentionPeriod: "172800"
-image: ghcr.io/brunobml/orders-processor:v1.2.0
+image: ghcr.io/brunobml/orders-processor:v1.3.0
