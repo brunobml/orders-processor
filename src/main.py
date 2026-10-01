@@ -16,11 +16,15 @@ TABLE_NAME = f"{APP}-{ENV}-history"
 VERSION = os.environ.get('APP_VERSION', 'v1.1.0')
 BUILD_COMMIT = os.environ.get('BUILD_COMMIT', 'local-dev')
 BUILD_TIME = os.environ.get('BUILD_TIME', 'unknown')
+# Phase 3 D.1: the access key ID identifies the cloud account to moto (and to AWS in the real
+# world, via IRSA / Pod Identity). Provided per environment through the optional Secret
+# <app>-<env>-aws; defaults to "mock" (moto's default account) when absent.
+ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', 'mock')
 
 def sqs_call(params):
     data = urllib.parse.urlencode(params).encode()
     req = urllib.request.Request(QUEUE_URL, data=data)
-    req.add_header('Authorization', 'AWS4-HMAC-SHA256 Credential=mock/20260929/us-east-1/sqs/aws4_request, SignedHeaders=host, Signature=mock')
+    req.add_header('Authorization', f'AWS4-HMAC-SHA256 Credential={ACCESS_KEY_ID}/20260929/us-east-1/sqs/aws4_request, SignedHeaders=host, Signature=mock')
     with urllib.request.urlopen(req, timeout=5) as resp:
         return resp.read()
 
@@ -29,7 +33,7 @@ def ddb_call(target, payload):
     req = urllib.request.Request(MOTO_HOST, data=data)
     req.add_header('X-Amz-Target', f'DynamoDB_20120810.{target}')
     req.add_header('Content-Type', 'application/x-amz-json-1.0')
-    req.add_header('Authorization', 'AWS4-HMAC-SHA256 Credential=mock/20260929/us-east-1/dynamodb/aws4_request, SignedHeaders=host, Signature=mock')
+    req.add_header('Authorization', f'AWS4-HMAC-SHA256 Credential={ACCESS_KEY_ID}/20260929/us-east-1/dynamodb/aws4_request, SignedHeaders=host, Signature=mock')
     with urllib.request.urlopen(req, timeout=5) as resp:
         return json.loads(resp.read().decode())
 
@@ -45,7 +49,7 @@ def init_dynamo():
     except Exception:
         pass
 
-def save_order(msg_id, body):
+def save_order(msg_id, body, _retry=True):
     try:
         ddb_call('PutItem', {
             'TableName': TABLE_NAME,
@@ -59,6 +63,12 @@ def save_order(msg_id, body):
             }
         })
     except Exception as e:
+        # Phase 3 D.1/D.2: the table lives in moto's memory; after a moto restart it is gone.
+        # Recreate it once and retry instead of failing until the pod restarts.
+        if _retry:
+            print(f"DynamoDB write failed ({e}); re-initializing table '{TABLE_NAME}' and retrying")
+            init_dynamo()
+            return save_order(msg_id, body, _retry=False)
         print(f"Error saving to DynamoDB: {e}")
 
 def get_orders():
