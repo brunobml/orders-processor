@@ -1,4 +1,5 @@
-FROM python:3.11-alpine
+# Base image pinned by digest (Phase 4 B.1); bump deliberately when Trivy reports fixes.
+FROM python:3.11-alpine@sha256:9a725b14f2ae4e1b92ae4c7a8f575c7bf0f451276b5d38c9ec20bb005d0063a8
 
 ARG APP_VERSION=v1.2.0
 ARG BUILD_COMMIT=local
