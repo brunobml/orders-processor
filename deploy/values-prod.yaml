@@ -2,4 +2,4 @@ name: orders
 environment: prod
 replicas: 2
 retentionPeriod: "604800"
-image: ghcr.io/brunobml/orders-processor:v1.4.0@sha256:c7e8f5d9038ad202da6d37e0be76aa342a482bd4d6b37279b0891792584cf32f
+image: ghcr.io/brunobml/orders-processor:v1.5.0@sha256:e95bb63320628d8541e984b668474bcc21066e54110d00ab20974132f1287510
