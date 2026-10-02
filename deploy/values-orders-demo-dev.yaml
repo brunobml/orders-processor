@@ -1,0 +1,6 @@
+# Phase 5 X12 acceptance: throwaway app (removed after the test).
+name: orders-demo
+environment: dev
+replicas: 1
+retentionPeriod: "86400"
+image: ghcr.io/brunobml/orders-processor:v1.5.0@sha256:e95bb63320628d8541e984b668474bcc21066e54110d00ab20974132f1287510
