@@ -1,0 +1,10 @@
+# Demo app for the operational drills playbook (gitops-control-plane
+# docs/runbooks/operational-drills-and-failure-injection.md, Drill 5). Kept permanently so the drill
+# only needs a registration file in tenant-workloads. Nothing uses it until a registration names it:
+#   tenants/tenant-a/apps/orders-demo-dev.yaml -> valuesFile: deploy/values-orders-demo-dev.yaml
+# Its own name keeps its queues, table and IAM user apart from the real orders-dev ones.
+name: orders-demo
+environment: dev
+replicas: 1
+retentionPeriod: "86400"
+image: ghcr.io/brunobml/orders-processor:v1.5.0@sha256:e95bb63320628d8541e984b668474bcc21066e54110d00ab20974132f1287510
