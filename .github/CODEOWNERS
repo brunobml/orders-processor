@@ -1,0 +1,8 @@
+# CODEOWNERS for orders-processor
+# Production deployment values require owner review and approval
+
+# Global repository owner
+* @brunobml
+
+# Production deployment values
+/deploy/values-prod.yaml @brunobml
